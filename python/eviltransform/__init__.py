@@ -53,17 +53,15 @@ def delta(lat, lng):
 def wgs2gcj(wgsLat, wgsLng):
     if outOfChina(wgsLat, wgsLng):
         return wgsLat, wgsLng
-    else:
-        dlat, dlng = delta(wgsLat, wgsLng)
-        return wgsLat + dlat, wgsLng + dlng
+    dlat, dlng = delta(wgsLat, wgsLng)
+    return wgsLat + dlat, wgsLng + dlng
 
 
 def gcj2wgs(gcjLat, gcjLng):
     if outOfChina(gcjLat, gcjLng):
         return gcjLat, gcjLng
-    else:
-        dlat, dlng = delta(gcjLat, gcjLng)
-        return gcjLat - dlat, gcjLng - dlng
+    dlat, dlng = delta(gcjLat, gcjLng)
+    return gcjLat - dlat, gcjLng - dlng
 
 
 def gcj2wgs_exact(gcjLat, gcjLng):
@@ -74,7 +72,7 @@ def gcj2wgs_exact(gcjLat, gcjLng):
     mLng = gcjLng - dLng
     pLat = gcjLat + dLat
     pLng = gcjLng + dLng
-    for i in range(30):
+    for _ in range(30):
         wgsLat = (mLat + pLat) / 2
         wgsLng = (mLng + pLng) / 2
         tmplat, tmplng = wgs2gcj(wgsLat, wgsLng)
@@ -101,13 +99,10 @@ def distance(latA, lngA, latB, lngB):
          math.cos((lngA - lngB) * pi180))
     y = math.sin(arcLatA) * math.sin(arcLatB)
     s = x + y
-    if s > 1:
-        s = 1
-    if s < -1:
-        s = -1
+    s = min(s, 1)
+    s = max(s, -1)
     alpha = math.acos(s)
-    distance = alpha * earthR
-    return distance
+    return alpha * earthR
 
 
 def gcj2bd(gcjLat, gcjLng):
